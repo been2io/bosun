@@ -589,8 +589,8 @@ func ParseFilters(rawFilters string, grouping bool, q *Query) ([]Filter, error) 
 		// filter conversions of http://opentsdb.net/docs/build/html/api_http/query/index.html
 		m := filterValueRe.FindStringSubmatch(splitRawFilter[1])
 		if m != nil {
-			filter.Type = m[1]
-			filter.Filter = m[2]
+			filter.Type = strings.TrimSpace(m[1])
+			filter.Filter = strings.TrimSpace(m[2])
 		} else {
 			// Legacy Conversion
 			filter.Type = "literal_or"
