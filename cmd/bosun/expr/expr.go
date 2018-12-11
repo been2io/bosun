@@ -33,7 +33,7 @@ type State struct {
 	unjoinedOk         bool
 	autods             int
 	vValue             float64
-
+	ExprConfig       ExprConfig
 	// Origin allows the source of the expression to be identified for logging and debugging
 	Origin string
 
@@ -61,11 +61,12 @@ type Backends struct {
 }
 
 type BosunProviders struct {
-	Squelched func(tags opentsdb.TagSet) bool
-	Search    *search.Search
-	History   AlertStatusProvider
-	Cache     *cache.Cache
-	Annotate  backend.Backend
+	Squelched  func(tags opentsdb.TagSet) bool
+	Search     *search.Search
+	History    AlertStatusProvider
+	Cache      *cache.Cache
+	Annotate   backend.Backend
+	ExprConfig ExprConfig
 }
 
 // Alert Status Provider is used to provide information about alert results.
@@ -99,6 +100,11 @@ func New(expr string, funcs ...map[string]parse.Func) (*Expr, error) {
 
 // Execute applies a parse expression to the specified OpenTSDB context, and
 // returns one result per group. T may be nil to ignore timings.
+type ExprConfig struct {
+	DefaultValue float64
+	NoDefault bool
+}
+
 func (e *Expr) Execute(backends *Backends, providers *BosunProviders, T miniprofiler.Timer, now time.Time, autods int, unjoinedOk bool, origin string) (r *Results, queries []opentsdb.Request, err error) {
 	if providers.Squelched == nil {
 		providers.Squelched = func(tags opentsdb.TagSet) bool {
@@ -113,6 +119,7 @@ func (e *Expr) Execute(backends *Backends, providers *BosunProviders, T miniprof
 		Origin:         origin,
 		Backends:       backends,
 		BosunProviders: providers,
+		ExprConfig:   providers.ExprConfig,
 		Timer:          T,
 	}
 	return e.ExecuteState(s)

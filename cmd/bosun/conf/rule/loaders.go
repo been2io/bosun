@@ -231,6 +231,29 @@ func (c *Conf) loadAlert(s *parse.SectionNode) {
 			if err != nil {
 				c.error(err)
 			}
+		case "defaultValue":
+			dv, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				c.error(err)
+			}
+			a.DefaultValue = dv
+		case "nulldpstozero":
+			ndz,err:=strconv.ParseBool(v)
+			if err != nil {
+				c.error(err)
+			}
+			if ndz{
+				a.NoDefault = false
+				a.DefaultValue = 0
+			} else {
+				a.NoDefault = true
+			}
+		case "noDefault":
+			nd,err:=strconv.ParseBool(v)
+			if err != nil {
+				c.error(err)
+			}
+			a.NoDefault = nd
 		default:
 			c.errorf("unknown key %s", p.key)
 		}

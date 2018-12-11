@@ -441,9 +441,10 @@ type Alert struct {
 	Log              bool
 	RunEvery         int
 	ReturnType       models.FuncType
-
-	TemplateName string   `json:"-"`
-	RawSquelch   []string `json:"-"`
+	DefaultValue     float64
+	NoDefault        bool
+	TemplateName     string   `json:"-"`
+	RawSquelch       []string `json:"-"`
 
 	Locator           `json:"-"`
 	AlertTemplateKeys map[string]*template.Template `json:"-"`

@@ -91,7 +91,30 @@ func timeTSDBRequest(e *State, req *opentsdb.Request) (s opentsdb.ResponseSet, e
 	for {
 		e.Timer.StepCustomTiming("tsdb", "query", string(b), func() {
 			getFn := func() (interface{}, error) {
-				return e.TSDBContext.Query(req)
+				rs, err := e.TSDBContext.Query(req)
+				if !e.ExprConfig.NoDefault{
+					if len(rs) <= 0 {
+						var tags opentsdb.TagSet
+						if len(req.Queries) ==1{
+							tags = req.Queries[0].Tags
+						}
+						rs = opentsdb.ResponseSet{
+							&opentsdb.Response{
+								Tags:tags,
+							},
+						}
+					}
+					for _, r := range rs {
+						if r.DPS == nil {
+							r.DPS = make(map[string]opentsdb.Point)
+						}
+						if len(r.DPS) <= 0 {
+							t:=strconv.FormatInt(time.Now().UTC().Unix(),10)
+							r.DPS[t]=opentsdb.Point(e.ExprConfig.DefaultValue)
+						}
+					}
+				}
+				return rs, err
 			}
 			var val interface{}
 			var hit bool
