@@ -237,7 +237,7 @@ func (c *Conf) loadAlert(s *parse.SectionNode) {
 				c.error(err)
 			}
 			a.DefaultValue = dv
-		case "nulldpstozero":
+		case "nullAsZero":
 			ndz,err:=strconv.ParseBool(v)
 			if err != nil {
 				c.error(err)
