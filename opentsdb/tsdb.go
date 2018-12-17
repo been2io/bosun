@@ -582,6 +582,7 @@ func ParseFilters(rawFilters string, grouping bool, q *Query) ([]Filter, error) 
 		}
 		filter := Filter{}
 		filter.TagK = splitRawFilter[0]
+		splitRawFilter[1] = strings.TrimSpace(splitRawFilter[1])
 		if grouping {
 			q.GroupByTags[filter.TagK] = ""
 		}
